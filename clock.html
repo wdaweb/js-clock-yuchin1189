@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&family=Oranienbaum&display=swap"
+        rel="stylesheet">
+    <title>Clock</title>
+    <style>
+        .oranienbaum-regular {
+            font-family: "Oranienbaum", serif;
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        body {
+            background: rgb(0, 255, 170);
+        }
+
+
+        #clock {
+            box-sizing: border-box;
+            width: 60vh;
+            height: 60vh;
+            background: rgb(171, 128, 208);
+            border: 1rem solid lightyellow;
+            border-radius: 30vh;
+            margin: auto;
+            position: relative;
+            font-family: 'Times New Roman', Times, serif;
+            filter: drop-shadow(0.1%);
+
+            .hands-text {
+                width: 3em;
+                position: relative;
+                /* background: rgba(255, 255, 255, 0.377); */
+                display: inline-block;
+                transform-origin: top left;
+                transform: rotate(90deg);
+                color: antiquewhite;
+                filter: drop-shadow(1px 2px #000);
+                font-size: 1em;
+            }
+        }
+
+        #hour {
+            width: 4%;
+            height: 100%;
+            background-image: linear-gradient(lightblue 12.5%, transparent, transparent 50%);
+            border-radius: 1rem;
+            position: absolute;
+            left: 50%;
+            text-indent: 0.5rem;
+            translate: -50% 0;
+            font-size: 3rem;
+            font-weight: bold;
+        }
+
+        #minute {
+            width: 2%;
+            height: 100%;
+            background: linear-gradient(lightcyan 25%, transparent, transparent 50%);
+            border-radius: 0.5rem;
+            position: absolute;
+            left: 50%;
+            translate: -50% 0;
+            font-size: 2rem;
+        }
+
+        #second {
+            width: 1%;
+            height: 100%;
+            background: linear-gradient(white 40%, transparent, transparent 50%);
+            border-radius: 0.5rem;
+            position: absolute;
+            left: 50%;
+            translate: -50% 0;
+            font-size: 1rem;
+        }
+
+        #digital {
+            text-align: center;
+            font-weight: bold;
+            font-size: 5rem;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            color: rgb(236, 135, 216);
+            filter: drop-shadow(.01rem .01rem .01rem lightgray);
+        }
+
+        #center {
+            width: 0.3rem;
+            height: 0.3rem;
+            background: lightgoldenrodyellow;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            translate: -50% -50%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="clock">
+        <div id="center"></div>
+        <div id="hour">
+            <div class="hands-text"></div>
+        </div>
+        <div id="minute">
+            <div class="hands-text"></div>
+        </div>
+        <div id="second">
+            <div class="hands-text"></div>
+        </div>
+    </div>
+    <div>
+        <p id="digital">00:00:00</p>
+    </div>
+    <script>
+        // 取得元素
+        const elHour = document.getElementById('hour');
+        const elMinute = document.getElementById('minute');
+        const elSecond = document.getElementById('second');
+        const elDigi = document.getElementById('digital');
+
+        const clock = () => {
+            const date = new Date();
+            const h = date.getHours();
+            const m = date.getMinutes();
+            const s = date.getSeconds();
+
+            // 三支指針皆以毫秒為單位旋轉
+            // plus：該單位的整數 + 小單位數字
+            // 秒 plus：秒 + 毫秒
+            const splus = s * 1000 + date.getMilliseconds();
+            // 分 plus：分＋毫秒
+            const mplus = m * 60000 + splus;
+            // 時 plus：時＋分＋毫秒
+            const hplus = h * 3600000 + mplus;
+            // console.log(hplus, mplus, ms);
+            // 時針：1 hr : 30 deg
+            // = 3,600 s : 30 deg
+            // = 3,600,000 ms : ? deg
+            // ？ = 120000分之一
+            elHour.style.transform = `rotate(${hplus / 120000}deg)`;
+            // 分針：1 min : 6 deg 
+            // = 60 sec : 6 deg 
+            // = 1 ms : 0.0001 deg
+            elMinute.style.transform = `rotate(${mplus * 0.0001}deg)`;
+            // 秒針：1 sec : 6 deg
+            // 1 ms ：0.006 deg
+            elSecond.style.transform = `rotate(${splus * 0.006}deg)`;
+
+            // 數字時鐘直接抓現在時間的數字，調整成各兩位數顯示
+            elDigi.innerText = `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
+
+            // elHour.children[0].children[0].innerText = h;
+            // elMinute.children[0].children[0].innerText = m;
+            // elSecond.children[0].children[0].innerText = s;
+            elHour.children[0].innerText = h + ' 時';
+            elMinute.children[0].innerText = m + ' 分';
+            elSecond.children[0].innerText = s + ' 秒';
+        }
+
+        // 每 1 毫秒執行一次 clock 函式
+        setInterval(clock, 1);
+        clock();
+    </script>
+</body>
+
+</html>
